@@ -15,6 +15,7 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 
 import Spotpack.Client;
+import Spotpack.event.impl.ClientTickEvent;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -519,6 +520,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
 
         this.renderGlobal.makeEntityOutlineShader();
+        Client.getInstance().start();
     }
 
     private void registerMetadataSerializers()
@@ -2120,6 +2122,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.mcProfiler.endStartSection("pendingConnection");
             this.myNetworkManager.processReceivedPackets();
         }
+        
+        new ClientTickEvent().call();
 
         this.mcProfiler.endSection();
         this.systemTime = getSystemTime();

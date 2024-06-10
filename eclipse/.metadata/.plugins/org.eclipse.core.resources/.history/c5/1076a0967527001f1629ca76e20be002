@@ -1,0 +1,5 @@
+package Spotpack.gui.hud;
+
+public class ColorPicker {
+
+}

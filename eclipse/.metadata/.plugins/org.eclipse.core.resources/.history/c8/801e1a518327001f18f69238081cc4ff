@@ -1,0 +1,5 @@
+package Spotpack.utils.notifications;
+
+public class NotificationManager {
+
+}

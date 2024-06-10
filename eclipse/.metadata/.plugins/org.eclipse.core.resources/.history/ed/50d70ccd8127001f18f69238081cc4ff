@@ -1,0 +1,29 @@
+package Spotpack.mods.impl;
+
+import Spotpack.gui.hud.ColorPicker;
+import Spotpack.gui.hud.ScreenPosition;
+import Spotpack.mods.ModDraggable;
+import net.minecraft.client.Minecraft;
+
+public class ModFPS extends ModDraggable {
+	
+	private ColorPicker colorPicker;
+	
+	   public ModFPS() {
+		      // Inicializa el color picker
+		      this.colorPicker = new ColorPicker();
+		   }
+	
+   public int getWidth() {
+      return 40;
+   }
+
+   public int getHeight() {
+      return this.font.FONT_HEIGHT;
+   }
+
+   public void render(ScreenPosition pos) {
+	   int color = colorPicker.getSelectedColor();
+      this.font.drawStringWithShadow("FPS: " + Minecraft.getDebugFPS(), (float)pos.getAbsoluteX(), (float)pos.getAbsoluteY(), color);
+   }
+}

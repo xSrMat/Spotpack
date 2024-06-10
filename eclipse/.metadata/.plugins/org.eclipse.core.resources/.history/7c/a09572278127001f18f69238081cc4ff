@@ -1,0 +1,125 @@
+package Spotpack.gui.hud;
+
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+
+import java.awt.*;
+import java.io.IOException;
+
+public class ColorPicker extends GuiScreen {
+
+    private final float[] color;
+    private boolean pickingColor;
+    private boolean pickingHue;
+    private boolean pickingAlpha;
+    private int pickerX, pickerY, pickerWidth, pickerHeight;
+    private int hueSliderX, hueSliderY, hueSliderWidth, hueSliderHeight;
+    private int alphaSliderX, alphaSliderY, alphaSliderWidth, alphaSliderHeight;
+    private float rainbowSpeed = 20.0f;
+    private boolean rainbowState = false;
+
+    public ColorPicker() {
+        this.color = new float[] {0.4f, 1.0f, 1.0f, 1.0f};
+        this.pickingColor = false;
+    }
+
+    @Override
+    public void initGui() {
+        this.pickerWidth = 120;
+        this.pickerHeight = 100;
+        this.pickerX = this.width / 2 - pickerWidth / 2;
+        this.pickerY = this.height / 2 - pickerHeight / 2;
+        this.hueSliderX = pickerX;
+        this.hueSliderY = pickerY + pickerHeight + 6;
+        this.hueSliderWidth = pickerWidth;
+        this.hueSliderHeight = 10;
+        this.alphaSliderX = pickerX + pickerWidth + 6;
+        this.alphaSliderY = pickerY;
+        this.alphaSliderWidth = 10;
+        this.alphaSliderHeight = pickerHeight;
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        // ... código existente para dibujar el ColorPicker ...
+
+        if (this.pickingHue || this.pickingAlpha || this.pickingColor) {
+            // Actualiza el color cuando se está seleccionando
+            updateColor(mouseX, mouseY);
+        }
+
+        // Dibuja el ColorPicker
+        // ... código existente para dibujar el ColorPicker ...
+    }
+
+    private void updateColor(int mouseX, int mouseY) {
+        if (this.pickingHue) {
+            if (this.hueSliderWidth > this.hueSliderHeight) {
+                float restrictedX = (float) Math.min(Math.max(hueSliderX, mouseX), hueSliderX + hueSliderWidth);
+                this.color[0] = (restrictedX - (float) hueSliderX) / hueSliderWidth;
+            } else {
+                float restrictedY = (float) Math.min(Math.max(hueSliderY, mouseY), hueSliderY + hueSliderHeight);
+                this.color[0] = (restrictedY - (float) hueSliderY) / hueSliderHeight;
+            }
+        }
+
+        if (this.pickingAlpha) {
+            if (this.alphaSliderWidth > this.alphaSliderHeight) {
+                float restrictedX = (float) Math.min(Math.max(alphaSliderX, mouseX), alphaSliderX + alphaSliderWidth);
+                this.color[3] = 1 - (restrictedX - (float) alphaSliderX) / alphaSliderWidth;
+            } else {
+                float restrictedY = (float) Math.min(Math.max(alphaSliderY, mouseY), alphaSliderY + alphaSliderHeight);
+                this.color[3] = 1 - (restrictedY - (float) alphaSliderY) / alphaSliderHeight;
+            }
+        }
+
+        if (this.pickingColor) {
+            float restrictedX = (float) Math.min(Math.max(pickerX, mouseX), pickerX + pickerWidth);
+            float restrictedY = (float) Math.min(Math.max(pickerY, mouseY), pickerY + pickerHeight);
+            this.color[1] = (restrictedX - (float) pickerX) / pickerWidth;
+            this.color[2] = 1 - (restrictedY - (float) pickerY) / pickerHeight;
+        }
+    }
+
+    public int getSelectedColor() {
+        return alpha(new Color(Color.HSBtoRGB(this.color[0], this.color[1], this.color[2])), this.color[3]);
+    }
+
+    private int alpha(Color color, float alpha) {
+        float red = color.getRed() / 255.0f;
+        float green = color.getGreen() / 255.0f;
+        float blue = color.getBlue() / 255.0f;
+        return new Color(red, green, blue, alpha).getRGB();
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        this.pickingColor = check(pickerX, pickerY, pickerX + pickerWidth, pickerY + pickerHeight, mouseX, mouseY);
+        this.pickingHue = check(hueSliderX, hueSliderY, hueSliderX + hueSliderWidth, hueSliderY + hueSliderHeight, mouseX, mouseY);
+        this.pickingAlpha = check(alphaSliderX, alphaSliderY, alphaSliderX + alphaSliderWidth, alphaSliderY + alphaSliderHeight, mouseX, mouseY);
+    }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        this.pickingColor = this.pickingHue = this.pickingAlpha = false;
+    }
+
+    private boolean check(int minX, int minY, int maxX, int maxY, int curX, int curY) {
+        return curX >= minX && curY >= minY && curX < maxX && curY < maxY;
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
+        if (keyCode == Keyboard.KEY_R) {
+            this.rainbowState = !this.rainbowState;
+        }
+        if (keyCode == Keyboard.KEY_LEFT) {
+            this.rainbowSpeed -= 0.1;
+        } else if (keyCode == Keyboard.KEY_RIGHT) {
+            this.rainbowSpeed += 0.1;
+        }
+    }
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="Spotpack.FileManager"/>
+    <fullyQualifiedTypeName name="Spotpack.event.Event"/>
+    <fullyQualifiedTypeName name="Spotpack.Client"/>
+    <fullyQualifiedTypeName name="Spotpack.gui.hud.ColorPicker"/>
+    <fullyQualifiedTypeName name="Spotpack.event.impl.ClientTickEvent"/>
+    <fullyQualifiedTypeName name="Spotpack.event.impl.RenderEvent"/>
+</qualifiedTypeNameHistroy>

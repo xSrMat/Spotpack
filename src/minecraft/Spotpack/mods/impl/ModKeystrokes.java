@@ -133,12 +133,12 @@ public class ModKeystrokes extends ModDraggable {
       private final boolean cps;
 
       static {
-         W = new ModKeystrokes.Key("W", Minecraft.getMinecraft().gameSettings.keyBindLeft, 21, 1, 18, 18, false);
-         A = new ModKeystrokes.Key("A", Minecraft.getMinecraft().gameSettings.keyBindBack, 1, 21, 18, 18, false);
-         S = new ModKeystrokes.Key("S", Minecraft.getMinecraft().gameSettings.keyBindRight, 21, 21, 18, 18, false);
-         D = new ModKeystrokes.Key("D", Minecraft.getMinecraft().gameSettings.keyBindJump, 41, 21, 18, 18, false);
-         LMB = new ModKeystrokes.Key("LMB", Minecraft.getMinecraft().gameSettings.keyBindPickBlock, 1, 41, 28, 18, true);
-         RMB = new ModKeystrokes.Key("RMB", Minecraft.getMinecraft().gameSettings.keyBindDrop, 31, 41, 28, 18, true);
+         W = new ModKeystrokes.Key("W", Minecraft.getMinecraft().gameSettings.keyBindForward, 21, 1, 18, 18, false);
+         A = new ModKeystrokes.Key("A", Minecraft.getMinecraft().gameSettings.keyBindLeft, 1, 21, 18, 18, false);
+         S = new ModKeystrokes.Key("S", Minecraft.getMinecraft().gameSettings.keyBindBack, 21, 21, 18, 18, false);
+         D = new ModKeystrokes.Key("D", Minecraft.getMinecraft().gameSettings.keyBindRight, 41, 21, 18, 18, false);
+         LMB = new ModKeystrokes.Key("LMB", Minecraft.getMinecraft().gameSettings.keyBindAttack, 1, 41, 28, 18, true);
+         RMB = new ModKeystrokes.Key("RMB", Minecraft.getMinecraft().gameSettings.keyBindPickBlock, 31, 41, 28, 18, true);
       }
 
       public Key(String name, KeyBinding keyBind, int x, int y, int width, int height, boolean cps) {
@@ -179,8 +179,8 @@ public class ModKeystrokes extends ModDraggable {
    public static enum KeystrokesMode {
       WASD(new ModKeystrokes.Key[]{ModKeystrokes.Key.W, ModKeystrokes.Key.A, ModKeystrokes.Key.S, ModKeystrokes.Key.D}),
       WASD_MOUSE(new ModKeystrokes.Key[]{ModKeystrokes.Key.W, ModKeystrokes.Key.A, ModKeystrokes.Key.S, ModKeystrokes.Key.A, ModKeystrokes.Key.LMB, ModKeystrokes.Key.RMB}),
-      WASD_JUMP(new ModKeystrokes.Key[]{ModKeystrokes.Key.W, ModKeystrokes.Key.A, ModKeystrokes.Key.S, ModKeystrokes.Key.D, ModKeystrokes.Key.LMB, ModKeystrokes.Key.RMB, new ModKeystrokes.Key("Â§m-----", Minecraft.getMinecraft().gameSettings.keyBindSneak, 1, 41, 58, 10, false)}),
-      WASD_JUMP_MOUSE(new ModKeystrokes.Key[]{ModKeystrokes.Key.W, ModKeystrokes.Key.A, ModKeystrokes.Key.S, ModKeystrokes.Key.LMB, ModKeystrokes.Key.RMB, ModKeystrokes.Key.D, new ModKeystrokes.Key("Â§m-----", Minecraft.getMinecraft().gameSettings.keyBindSneak, 1, 61, 58, 10, false)});
+      WASD_JUMP(new ModKeystrokes.Key[]{ModKeystrokes.Key.W, ModKeystrokes.Key.A, ModKeystrokes.Key.S, ModKeystrokes.Key.D, ModKeystrokes.Key.LMB, ModKeystrokes.Key.RMB, new ModKeystrokes.Key("§m-----", Minecraft.getMinecraft().gameSettings.keyBindJump, 1, 41, 58, 10, false)}),
+      WASD_JUMP_MOUSE(new ModKeystrokes.Key[]{ModKeystrokes.Key.W, ModKeystrokes.Key.A, ModKeystrokes.Key.S, ModKeystrokes.Key.LMB, ModKeystrokes.Key.RMB, ModKeystrokes.Key.D, new ModKeystrokes.Key("§m-----", Minecraft.getMinecraft().gameSettings.keyBindJump, 1, 61, 58, 10, false)});
 
       private final ModKeystrokes.Key[] keys;
       private int width = 0;

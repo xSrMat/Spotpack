@@ -1,0 +1,92 @@
+/*    */ package LehanClient;
+/*    */ 
+/*    */ import LehanClient.event.EventManager;
+/*    */ import LehanClient.event.EventTarget;
+/*    */ import LehanClient.event.impl.ClientTickEvent;
+/*    */ import LehanClient.gui.hud.HUDManager;
+/*    */ import LehanClient.mods.Mod;
+/*    */ import LehanClient.mods.ModInstances;
+/*    */ import LehanClient.mods.ModToggle;
+/*    */ import java.io.File;
+/*    */ import java.io.FileNotFoundException;
+/*    */ import java.io.IOException;
+/*    */ import java.util.List;
+/*    */ import net.minecraft.client.Minecraft;
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ public class Client
+/*    */ {
+/*    */   public List<Mod> mods;
+/*    */   public static final File DEFAULT_DIRECTORY;
+/*    */   public static final File CONFIG;
+/* 24 */   public static final Client INSTANCE = new Client();
+/*    */   
+/*    */   public static final Client getInstance() {
+/* 27 */     return INSTANCE;
+/*    */   }
+/*    */   private FileManager fileManager;
+/*    */   public static final File ACCOUNT;
+/*    */   
+/*    */   static {
+/* 33 */     DEFAULT_DIRECTORY = new File(System.getProperty("user.home"), "Lehan Client");
+/* 34 */     CONFIG = new File(DEFAULT_DIRECTORY, "config.json");
+/* 35 */     ACCOUNT = new File(DEFAULT_DIRECTORY, "account.txt");
+/* 36 */     if (!DEFAULT_DIRECTORY.exists()) {
+/* 37 */       DEFAULT_DIRECTORY.mkdirs();
+/*    */     }
+/*    */   }
+/*    */   
+/* 41 */   private DiscordRP discordRP = new DiscordRP();
+/*    */   
+/*    */   Minecraft mc;
+/*    */   
+/*    */   private HUDManager hudManager;
+/*    */ 
+/*    */   
+/*    */   public void init() {
+/* 49 */     this.discordRP.start();
+/* 50 */     EventManager.register(this);
+/*    */   }
+/*    */   
+/*    */   public void start() {
+/* 54 */     this.hudManager = HUDManager.getInstance();
+/* 55 */     ModInstances.register(this.hudManager);
+/* 56 */     this.mods = ModInstances.mods;
+/*    */     try {
+/* 58 */       for (Mod mod : this.mods) {
+/* 59 */         ModToggle.loadEnabled(new Mod[] { mod });
+/*    */       } 
+/* 61 */     } catch (FileNotFoundException e) {
+/* 62 */       e.printStackTrace();
+/*    */     } 
+/*    */   }
+/*    */   
+/*    */   public void shutdown() {
+/* 67 */     this.discordRP.shutdown();
+/*    */     try {
+/* 69 */       for (Mod mod : this.mods) {
+/* 70 */         ModToggle.saveEnabled(new Mod[] { mod });
+/*    */       } 
+/* 72 */     } catch (IOException e) {
+/* 73 */       e.printStackTrace();
+/*    */     } 
+/*    */   }
+/*    */   
+/*    */   public DiscordRP getDiscordRP() {
+/* 78 */     return this.discordRP;
+/*    */   }
+/*    */   
+/*    */   @EventTarget
+/*    */   public void onTick(ClientTickEvent e) {
+/* 83 */     if ((Minecraft.getMinecraft()).gameSettings.CLIENT_GUI_MOD_POS.isPressed())
+/* 84 */       this.hudManager.displayConfigScreen(); 
+/*    */   }
+/*    */ }
+
+
+/* Location:              C:\Users\Mathew\Documents\LehanClient.jar!\LehanClient\Client.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

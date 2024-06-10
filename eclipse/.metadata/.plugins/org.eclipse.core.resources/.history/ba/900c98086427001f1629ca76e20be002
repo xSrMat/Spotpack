@@ -1,0 +1,50 @@
+/*    */ package Spotpack;
+/*    */ 
+/*    */ import net.minecraft.client.Minecraft;
+/*    */ import net.minecraft.client.gui.Gui;
+/*    */ import net.minecraft.client.gui.ScaledResolution;
+/*    */ import net.minecraft.util.ResourceLocation;
+/*    */ 
+/*    */ public class GuiHelper
+/*    */ {
+/* 10 */   private static Minecraft mc = Minecraft.getMinecraft();
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   
+/*    */   public static void drawPicture(int x, int y, int width, int height, String location) {
+/* 24 */     ResourceLocation loc = new ResourceLocation("lehan/" + location);
+/* 25 */     mc.getTextureManager().bindTexture(loc);
+/* 26 */     Gui.drawModalRectWithCustomSizedTexture(x, y, 0.0F, 0.0F, width, height, width, height);
+/*    */   }
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */   
+/*    */   public void drawBackgroundPicture(int width, int height, String location) {
+/* 38 */     ScaledResolution scaledResolution = new ScaledResolution(mc);
+/* 39 */     ResourceLocation loc = new ResourceLocation(location);
+/* 40 */     mc.getTextureManager().bindTexture(loc);
+/* 41 */     Gui.drawModalRectWithCustomSizedTexture(0.0F, 0.0F, 0.0F, 0.0F, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight());
+/* 42 */     Gui.drawRect(0.0F, 0.0F, width, height, 1073741824);
+/*    */   }
+/*    */ }
+
+
+/* Location:              C:\Users\Mathew\Documents\LehanClient.jar!\LehanClient\GuiHelper.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

@@ -1,0 +1,6 @@
+package LehanClient.mods;
+
+public enum Category {
+   PLAYER,
+   RENDER;
+}

@@ -1,0 +1,89 @@
+/*    */ package LehanClient.mods;
+/*    */ 
+/*    */ import LehanClient.gui.hud.HUDManager;
+/*    */ import LehanClient.gui.hud.IRenderer;
+/*    */ import LehanClient.mods.impl.ModArmorStatus;
+/*    */ import LehanClient.mods.impl.ModCps;
+/*    */ import LehanClient.mods.impl.ModFPS;
+/*    */ import LehanClient.mods.impl.ModKeystrokes;
+/*    */ import LehanClient.mods.impl.ModPosition;
+/*    */ import LehanClient.mods.impl.ModPotionStatus;
+/*    */ import java.util.ArrayList;
+/*    */ 
+/*    */ public class ModInstances
+/*    */ {
+/* 15 */   public static ArrayList<Mod> mods = new ArrayList<>();
+/*    */   
+/*    */   private static ModFPS modFPS;
+/*    */   
+/*    */   private static ModPotionStatus modPotionStatus;
+/*    */   
+/*    */   private static ModCps modCps;
+/*    */   
+/*    */   private static ModPosition modPosition;
+/*    */   
+/*    */   private static ModKeystrokes modKeystrokes;
+/*    */   private static ModArmorStatus modArmorStatus;
+/*    */   
+/*    */   public static void register(HUDManager api) {
+/* 29 */     modFPS = new ModFPS();
+/* 30 */     api.register(new IRenderer[] { (IRenderer)modFPS });
+/* 31 */     mods.add(modFPS);
+/*    */ 
+/*    */     
+/* 34 */     modPotionStatus = new ModPotionStatus();
+/* 35 */     api.register(new IRenderer[] { (IRenderer)modPotionStatus });
+/* 36 */     mods.add(modPotionStatus);
+/*    */ 
+/*    */     
+/* 39 */     modCps = new ModCps();
+/* 40 */     api.register(new IRenderer[] { (IRenderer)modCps });
+/* 41 */     mods.add(modCps);
+/*    */ 
+/*    */     
+/* 44 */     modPosition = new ModPosition();
+/* 45 */     api.register(new IRenderer[] { (IRenderer)modPosition });
+/* 46 */     mods.add(modPosition);
+/*    */ 
+/*    */ 
+/*    */     
+/* 50 */     modKeystrokes = new ModKeystrokes();
+/* 51 */     api.register(new IRenderer[] { (IRenderer)modKeystrokes });
+/* 52 */     mods.add(modKeystrokes);
+/*    */ 
+/*    */     
+/* 55 */     modArmorStatus = new ModArmorStatus();
+/* 56 */     api.register(new IRenderer[] { (IRenderer)modArmorStatus });
+/* 57 */     mods.add(modArmorStatus);
+/*    */   }
+/*    */   
+/*    */   public static ModFPS getModFPS() {
+/* 61 */     return modFPS;
+/*    */   }
+/*    */   
+/*    */   public static ModPotionStatus getModPotionStatus() {
+/* 65 */     return modPotionStatus;
+/*    */   }
+/*    */   
+/*    */   public static ModCps getModCps() {
+/* 69 */     return modCps;
+/*    */   }
+/*    */   
+/*    */   public static ModPosition getModPosition() {
+/* 73 */     return modPosition;
+/*    */   }
+/*    */   
+/*    */   public static ModKeystrokes getModKeystrokes() {
+/* 77 */     return modKeystrokes;
+/*    */   }
+/*    */   
+/*    */   public static ModArmorStatus getModArmorStatus() {
+/* 81 */     return modArmorStatus;
+/*    */   }
+/*    */ }
+
+
+/* Location:              C:\Users\Mathew\Documents\LehanClient.jar!\LehanClient\mods\ModInstances.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

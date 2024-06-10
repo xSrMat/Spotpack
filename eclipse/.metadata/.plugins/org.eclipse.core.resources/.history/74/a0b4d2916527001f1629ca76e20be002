@@ -1,0 +1,122 @@
+/*     */ package LehanClient.mods.impl;
+/*     */ 
+/*     */ import LehanClient.gui.hud.ScreenPosition;
+/*     */ import LehanClient.mods.ModDraggable;
+/*     */ import java.util.Collection;
+/*     */ import net.minecraft.client.Minecraft;
+/*     */ import net.minecraft.client.gui.FontRenderer;
+/*     */ import net.minecraft.client.renderer.GlStateManager;
+/*     */ import net.minecraft.client.renderer.Tessellator;
+/*     */ import net.minecraft.client.renderer.WorldRenderer;
+/*     */ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+/*     */ import net.minecraft.client.resources.I18n;
+/*     */ import net.minecraft.potion.Potion;
+/*     */ import net.minecraft.potion.PotionEffect;
+/*     */ import net.minecraft.util.ResourceLocation;
+/*     */ 
+/*     */ public class ModPotionStatus
+/*     */   extends ModDraggable
+/*     */ {
+/*     */   protected FontRenderer fontRendererObj;
+/*     */   protected float zLevelFloat;
+/*     */   
+/*     */   public int getX() {
+/*  24 */     return this.pos.getAbsoluteX();
+/*     */   }
+/*     */   
+/*  27 */   int offset = 13;
+/*     */ 
+/*     */   
+/*     */   public int getWidth() {
+/*  31 */     return 101;
+/*     */   }
+/*     */ 
+/*     */   
+/*     */   public int getHeight() {
+/*  36 */     return 154;
+/*     */   }
+/*     */ 
+/*     */   
+/*     */   public void drawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height) {
+/*  41 */     float f = 0.00390625F;
+/*  42 */     float f1 = 0.00390625F;
+/*  43 */     Tessellator tessellator = Tessellator.getInstance();
+/*  44 */     WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+/*  45 */     worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+/*  46 */     worldrenderer.pos((x + 0), (y + height), this.zLevelFloat).tex(((textureX + 0) * f), ((textureY + height) * f1)).endVertex();
+/*  47 */     worldrenderer.pos((x + width), (y + height), this.zLevelFloat).tex(((textureX + width) * f), ((textureY + height) * f1)).endVertex();
+/*  48 */     worldrenderer.pos((x + width), (y + 0), this.zLevelFloat).tex(((textureX + width) * f), ((textureY + 0) * f1)).endVertex();
+/*  49 */     worldrenderer.pos((x + 0), (y + 0), this.zLevelFloat).tex(((textureX + 0) * f), ((textureY + 0) * f1)).endVertex();
+/*  50 */     tessellator.draw();
+/*     */   }
+/*     */ 
+/*     */ 
+/*     */   
+/*     */   public void render(ScreenPosition pos) {
+/*  56 */     int offsetX = 21;
+/*  57 */     int offsetY = 14;
+/*  58 */     int i = 80;
+/*  59 */     int i2 = 16;
+/*  60 */     Collection<PotionEffect> collection = this.mc.thePlayer.getActivePotionEffects();
+/*     */     
+/*  62 */     if (!collection.isEmpty()) {
+/*     */       
+/*  64 */       GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+/*  65 */       GlStateManager.disableLighting();
+/*  66 */       int l = 33;
+/*     */ 
+/*     */       
+/*  69 */       if (collection.size() > 5)
+/*     */       {
+/*  71 */         l = 132 / (collection.size() - 1);
+/*     */       }
+/*     */       
+/*  74 */       for (PotionEffect potioneffect : this.mc.thePlayer.getActivePotionEffects()) {
+/*     */         
+/*  76 */         Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
+/*  77 */         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+/*     */         
+/*  79 */         if (potion.hasStatusIcon()) {
+/*     */           
+/*  81 */           Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
+/*  82 */           int i1 = potion.getStatusIconIndex();
+/*  83 */           drawTexturedModalRect(pos.getAbsoluteX() + offsetX - 20, pos.getAbsoluteY() + i2 - offsetY, 0 + i1 % 8 * 18, 198 + i1 / 8 * 18, 18, 18);
+/*     */         } 
+/*     */         
+/*  86 */         String s1 = I18n.format(potion.getName(), new Object[0]);
+/*  87 */         if (potioneffect.getAmplifier() == 1) {
+/*     */           
+/*  89 */           s1 = String.valueOf(s1) + " " + I18n.format("enchantment.level.2", new Object[0]);
+/*     */         }
+/*  91 */         else if (potioneffect.getAmplifier() == 2) {
+/*     */           
+/*  93 */           s1 = String.valueOf(s1) + " " + I18n.format("enchantment.level.3", new Object[0]);
+/*     */         }
+/*  95 */         else if (potioneffect.getAmplifier() == 3) {
+/*     */           
+/*  97 */           s1 = String.valueOf(s1) + " " + I18n.format("enchantment.level.4", new Object[0]);
+/*     */         } 
+/*     */         
+/* 100 */         this.font.drawString(s1, (pos.getAbsoluteX() + offsetX), (pos.getAbsoluteY() + i2 - offsetY), 16777215, true);
+/* 101 */         String s = Potion.getDurationString(potioneffect);
+/* 102 */         this.font.drawString(s, (pos.getAbsoluteX() + offsetX), (pos.getAbsoluteY() + i2 + 10 - offsetY), 8355711, true);
+/* 103 */         i2 += l;
+/*     */       } 
+/*     */     } 
+/*     */   }
+/*     */ 
+/*     */ 
+/*     */   
+/*     */   public void renderDummy(ScreenPosition pos) {
+/* 111 */     String s = "Potion Status";
+/*     */     
+/* 113 */     this.font.drawStringWithShadow(s, (getWidth() / 2 - this.font.getStringWidth(s) / 2 + pos.getAbsoluteX()), (pos.getAbsoluteY() - 25 + this.offset), 16777215);
+/* 114 */     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+/*     */   }
+/*     */ }
+
+
+/* Location:              C:\Users\Mathew\Documents\LehanClient.jar!\LehanClient\mods\impl\ModPotionStatus.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

@@ -1,0 +1,248 @@
+package LehanClient.gui;
+
+import LehanClient.Client;
+import LehanClient.utils.fontRenderer.GlyphPageFontRenderer;
+import fr.litarvan.openauth.microsoft.MicrosoftAuthResult;
+import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator;
+import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import javax.net.ssl.HttpsURLConnection;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Session;
+import org.lwjgl.input.Keyboard;
+
+public class LoginGUI extends GuiScreen {
+   private boolean crackedLogin = false;
+   GlyphPageFontRenderer ufr;
+   private boolean flag = false;
+   private long time = System.currentTimeMillis();
+   private String name = "";
+
+   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+      GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+      this.mc.getTextureManager().bindTexture(new ResourceLocation("lehan/bg.jpg"));
+      drawModalRectWithCustomSizedTexture(0.0F, 0.0F, 0.0F, 0.0F, (float)this.width, (float)this.height, (float)this.width, (float)this.height);
+      float width = (float)(this.width / 2);
+      float height = (float)(this.height / 2);
+      drawRect(width - 150.0F, height - 100.0F, width + 150.0F, height + 100.0F, (new Color(0, 0, 25, 75)).getRGB());
+      this.drawStringWithShadow("Welcome!", width - this.getStringWidth("Welcome!", 16.0F) / 2.0F, height - 90.0F, 16.0F, -1);
+      this.drawStringWithShadow("You are not logged in :(", width - this.getStringWidth("You are not logged in :(", 8.0F) / 2.0F, height - 65.0F, 8.0F, -1);
+      drawRect(width - 50.0F, height - 5.0F, width + 50.0F, height + 20.0F, !this.crackedLogin && this.isInsideBox(mouseX, mouseY, width - 50.0F, height - 5.0F, width + 50.0F, height + 20.0F) ? (new Color(0, 0, 25, 128)).getRGB() : (new Color(0, 0, 25, 75)).getRGB());
+      drawRect(width - 50.0F, height + 25.0F, width + 50.0F, height + 50.0F, !this.crackedLogin && this.isInsideBox(mouseX, mouseY, width - 50.0F, height + 25.0F, width + 50.0F, height + 50.0F) ? (new Color(0, 0, 25, 128)).getRGB() : (new Color(0, 0, 25, 75)).getRGB());
+      this.drawStringWithShadow("Login (Premium)", width - this.getStringWidth("Login (Premium)", 8.0F) / 2.0F, height + 4.0F, -1);
+      this.drawStringWithShadow("Login (Cracked)", width - this.getStringWidth("Login (Cracked)", 8.0F) / 2.0F, height + 34.0F, -1);
+      if (this.crackedLogin) {
+         drawRect(0.0F, 0.0F, (float)this.width, (float)this.height, (new Color(0, 0, 0, 175)).getRGB());
+         this.drawString("Name: " + this.name + (this.flag ? (this.name.length() > 15 ? "|" : "_") : ""), 20.0F, height - 16.0F, 32.0F, -1);
+         this.drawString("Press the enter key when done", 20.0F, height + 20.0F, (new Color(128, 128, 128)).getRGB());
+         if (System.currentTimeMillis() > this.time + 350L) {
+            this.flag = !this.flag;
+            this.time = System.currentTimeMillis();
+         }
+      }
+
+      super.drawScreen(mouseX, mouseY, partialTicks);
+   }
+
+   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+      super.mouseClicked(mouseX, mouseY, mouseButton);
+      float width = (float)(this.width / 2);
+      float height = (float)(this.height / 2);
+      if (this.isInsideBox(mouseX, mouseY, width - 50.0F, height - 5.0F, width + 50.0F, height + 20.0F) && mouseButton == 0) {
+         try {
+            boolean fullscreen = this.mc.isFullScreen();
+            if (fullscreen) {
+               this.mc.toggleFullscreen();
+            }
+
+            MicrosoftAuthenticator microsoftAuthenticator = new MicrosoftAuthenticator();
+            MicrosoftAuthResult microsoftAuthResult = microsoftAuthenticator.loginWithWebview();
+            this.mc.setSession(new Session(microsoftAuthResult.getProfile().getName(), microsoftAuthResult.getProfile().getId(), microsoftAuthResult.getAccessToken(), "mojang"));
+            FileWriter fileWriter = null;
+
+            try {
+               if (!Client.ACCOUNT.exists()) {
+                  Client.ACCOUNT.createNewFile();
+               }
+
+               fileWriter = new FileWriter(Client.ACCOUNT);
+               fileWriter.write(String.valueOf(microsoftAuthResult.getRefreshToken()) + "\n" + microsoftAuthResult.getProfile().getId() + "\n" + microsoftAuthResult.getProfile().getName());
+            } catch (Exception var20) {
+            } finally {
+               if (fileWriter != null) {
+                  try {
+                     fileWriter.close();
+                  } catch (Exception var19) {
+                  }
+               }
+
+            }
+
+            this.mc.displayGuiScreen(new GuiMainMenu());
+            if (fullscreen) {
+               this.mc.toggleFullscreen();
+            }
+         } catch (Exception var22) {
+         }
+      }
+
+      if (this.isInsideBox(mouseX, mouseY, width - 50.0F, height + 25.0F, width + 50.0F, height + 50.0F) && mouseButton == 0) {
+         this.crackedLogin = true;
+      }
+
+   }
+
+   protected void keyTyped(char typedChar, int keyCode) throws IOException {
+      if (keyCode == 1 && this.crackedLogin) {
+         this.crackedLogin = false;
+      } else if (keyCode == 28 && this.crackedLogin) {
+         String uuid = this.getUUID(this.name);
+         this.mc.setSession(new Session(this.name, uuid, "0", "legacy"));
+         FileWriter fileWriter = null;
+
+         try {
+            if (!Client.ACCOUNT.exists()) {
+               Client.ACCOUNT.createNewFile();
+            }
+
+            fileWriter = new FileWriter(Client.ACCOUNT);
+            fileWriter.write("0\n" + uuid + "\n" + this.name);
+         } catch (Exception var14) {
+         } finally {
+            if (fileWriter != null) {
+               try {
+                  fileWriter.close();
+               } catch (Exception var13) {
+               }
+            }
+
+         }
+
+         this.mc.displayGuiScreen(new GuiMainMenu());
+         this.crackedLogin = false;
+      } else if (this.crackedLogin) {
+         if (keyCode == 14) {
+            if (this.name.length() > 0) {
+               this.name = this.name.substring(0, this.name.length() - 1);
+            }
+         } else if (GuiScreen.isKeyComboCtrlV(keyCode)) {
+            this.name = String.valueOf(this.name) + GuiScreen.getClipboardString();
+         } else if (this.name.length() < 16) {
+            this.name = String.valueOf(this.name) + this.getChar(typedChar);
+         }
+      }
+
+   }
+
+   public void actionPerformed(GuiButton button) {
+      if (button.id == 1) {
+         FileWriter fileWriter = null;
+
+         try {
+            if (!Client.ACCOUNT.exists()) {
+               Client.ACCOUNT.createNewFile();
+            }
+
+            fileWriter = new FileWriter(Client.ACCOUNT);
+            fileWriter.write("1\n" + this.mc.getSession().getPlayerID() + "\n" + this.mc.getSession().getUsername());
+         } catch (Exception var12) {
+         } finally {
+            if (fileWriter != null) {
+               try {
+                  fileWriter.close();
+               } catch (Exception var11) {
+               }
+            }
+
+         }
+
+         this.mc.displayGuiScreen(new GuiMainMenu());
+      }
+
+   }
+
+   public void initGui() {
+      super.initGui();
+      this.buttonList.add(new GuiButton(1, this.width - 65, 5, 60, 20, "Skip"));
+      Keyboard.enableRepeatEvents(true);
+   }
+
+   public void onGuiClosed() {
+      super.onGuiClosed();
+      Keyboard.enableRepeatEvents(false);
+   }
+
+   public String getChar(char letter) {
+      char[] validCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+      char[] arrayOfChar1 = validCharacters;
+      int i = validCharacters.length;
+
+      for(byte b = 0; b < i; ++b) {
+         char temp = arrayOfChar1[b];
+         if (letter == temp) {
+            return String.valueOf(letter);
+         }
+      }
+
+      return "";
+   }
+
+   public String getUUID(String name) {
+      HttpsURLConnection httpsURLConnection = null;
+      InputStreamReader inputStreamReader = null;
+      BufferedReader bufferedReader = null;
+      String uuid = name;
+
+      try {
+         httpsURLConnection = (HttpsURLConnection)(new URL("https://api.mojang.com/users/profiles/minecraft/" + name)).openConnection();
+         httpsURLConnection.setDoInput(true);
+         httpsURLConnection.setDoOutput(true);
+         httpsURLConnection.connect();
+         httpsURLConnection.getInputStream();
+         inputStreamReader = new InputStreamReader(httpsURLConnection.getInputStream());
+         bufferedReader = new BufferedReader(inputStreamReader);
+
+         String line;
+         while((line = bufferedReader.readLine()) != null) {
+            line = line.trim();
+            if (line.contains("\"id\" : ")) {
+               uuid = line.substring(8, line.length() - 2);
+            }
+         }
+      } catch (Exception var19) {
+      } finally {
+         if (bufferedReader != null) {
+            try {
+               bufferedReader.close();
+            } catch (Exception var18) {
+            }
+         }
+
+         if (inputStreamReader != null) {
+            try {
+               inputStreamReader.close();
+            } catch (Exception var17) {
+            }
+         }
+
+         if (httpsURLConnection != null) {
+            httpsURLConnection.disconnect();
+         }
+
+      }
+
+      return uuid;
+   }
+
+   public boolean isInsideBox(int mouseX, int mouseY, float x, float y, float width, float height) {
+      return (float)mouseX > x && (float)mouseX < width && (float)mouseY > y && (float)mouseY < height;
+   }
+}

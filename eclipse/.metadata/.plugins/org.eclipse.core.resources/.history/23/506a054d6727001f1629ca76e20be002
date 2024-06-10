@@ -1,0 +1,182 @@
+package LehanClient.gui.hud;
+
+import LehanClient.ClickGui.ClickGui;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.Predicate;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+
+public class HUDConfigScreen extends GuiScreen {
+   int i = 0;
+   private int smX;
+   private int smY;
+   private boolean dragged = false;
+   protected boolean hovered;
+   private float index = 0.0F;
+   private final HashMap<IRenderer, ScreenPosition> renderers = new HashMap();
+   private Optional<IRenderer> selectedRenderer = Optional.empty();
+   private int prevX;
+   private int prevY;
+   private static ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+
+   protected void actionPerformed(GuiButton button) throws IOException {
+      switch(button.id) {
+      case 9:
+         this.mc.displayGuiScreen(new ClickGui());
+      default:
+      }
+   }
+
+   public void initGui() {
+      float i = (float)(this.width / 2);
+      float j = (float)(this.height / 2);
+      int m = this.height / 3;
+      int n = this.width / 2;
+      this.buttonList.add(new GuiButton(9, n - 2 - 50, m - 2 + 70, 98, 20, "Mods"));
+      super.initGui();
+   }
+
+   public HUDConfigScreen(HUDManager api) {
+      Collection<IRenderer> registeredRenderers = api.getRegisteredRenderers();
+      Iterator var4 = registeredRenderers.iterator();
+
+      while(var4.hasNext()) {
+         IRenderer ren = (IRenderer)var4.next();
+         if (ren.isEnabled()) {
+            ScreenPosition pos = ren.load();
+            if (pos == null) {
+               pos = ScreenPosition.fromRelativePosition(0.5D, 0.5D);
+            }
+
+            this.adjustBounds(ren, pos);
+            this.renderers.put(ren, pos);
+         }
+      }
+
+   }
+
+   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+      super.drawDefaultBackground();
+      float zBackup = this.zLevel;
+      this.zLevel = 200.0F;
+      Iterator var6 = this.renderers.keySet().iterator();
+
+      while(var6.hasNext()) {
+         IRenderer renderer = (IRenderer)var6.next();
+         ScreenPosition pos = (ScreenPosition)this.renderers.get(renderer);
+         Gui.drawRect((float)pos.getAbsoluteX(), (float)pos.getAbsoluteY(), (float)(pos.getAbsoluteX() + renderer.getWidth()), (float)(pos.getAbsoluteY() + renderer.getHeight()), 872415231);
+         this.drawHollowRect(pos.getAbsoluteX(), pos.getAbsoluteY(), renderer.getWidth(), renderer.getHeight(), -1996488705);
+         renderer.renderDummy(pos);
+      }
+
+      this.smX = mouseX;
+      this.smY = mouseY;
+      this.zLevel = zBackup;
+      super.drawScreen(mouseX, mouseY, partialTicks);
+   }
+
+   private void drawHollowRect(int x, int y, int w, int h, int color) {
+      this.drawHorizontalLine(x, x + w, y, color);
+      this.drawHorizontalLine(x, x + w, y + h, color);
+      this.drawVerticalLine(x, y + h, y, color);
+      this.drawVerticalLine(x + w, y + h, y, color);
+   }
+
+   protected void keyTyped(char typedChar, int keyCode) throws IOException {
+      if (keyCode == 1) {
+         this.renderers.entrySet().forEach((entry) -> {
+            ((IRenderer)entry.getKey()).save((ScreenPosition)entry.getValue());
+         });
+         this.mc.displayGuiScreen((GuiScreen)null);
+      }
+
+   }
+
+   protected void mouseClickMove(int x, int y, int button, long time) {
+      if (this.selectedRenderer.isPresent()) {
+         this.moveSelectedRenderBy(x - this.prevX, y - this.prevY);
+      }
+
+      this.prevX = x;
+      this.prevY = y;
+   }
+
+   private void moveSelectedRenderBy(int offsetX, int offsetY) {
+      IRenderer renderer = (IRenderer)this.selectedRenderer.get();
+      ScreenPosition pos = (ScreenPosition)this.renderers.get(renderer);
+      pos.setAbsolute(pos.getAbsoluteX() + offsetX, pos.getAbsoluteY() + offsetY);
+      if (pos.getAbsoluteX() == 0) {
+         pos.setAbsolute(1, pos.getAbsoluteY());
+      }
+
+      if (pos.getAbsoluteY() == 0) {
+         pos.setAbsolute(pos.getAbsoluteX(), 1);
+      }
+
+      this.adjustBounds(renderer, pos);
+   }
+
+   public void onGuiClosed() {
+      Iterator var2 = this.renderers.keySet().iterator();
+
+      while(var2.hasNext()) {
+         IRenderer renderer = (IRenderer)var2.next();
+         renderer.save((ScreenPosition)this.renderers.get(renderer));
+      }
+
+   }
+
+   public boolean doesGuiPauseGame() {
+      return true;
+   }
+
+   private void adjustBounds(IRenderer renderer, ScreenPosition pos) {
+      ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+      int screenWidth = res.getScaledWidth();
+      int screenHeight = res.getScaledHeight();
+      int absoluteX = Math.max(0, Math.min(pos.getAbsoluteX(), Math.max(screenWidth - renderer.getWidth(), 0)));
+      int absoluteY = Math.max(0, Math.min(pos.getAbsoluteY(), Math.max(screenHeight - renderer.getHeight(), 0)));
+      pos.setAbsolute(absoluteX, absoluteY);
+   }
+
+   protected void mouseClicked(int x, int y, int button) throws IOException {
+      this.prevX = x;
+      this.prevY = y;
+      this.dragged = true;
+      this.loadMouseOver(x, y);
+      super.mouseClicked(x, y, button);
+   }
+
+   protected void mouseReleased(int mouseX, int mouseY, int state) {
+      this.dragged = false;
+      super.mouseReleased(mouseX, mouseY, state);
+   }
+
+   private void loadMouseOver(int x, int y) {
+      this.selectedRenderer = this.renderers.keySet().stream().filter(new HUDConfigScreen.MouseOverFinder(x, y)).findFirst();
+   }
+
+   private class MouseOverFinder implements Predicate<IRenderer> {
+      private int mouseX;
+      private int mouseY;
+
+      public MouseOverFinder(int x, int y) {
+         this.mouseX = x;
+         this.mouseY = y;
+      }
+
+      public boolean test(IRenderer renderer) {
+         ScreenPosition pos = (ScreenPosition)HUDConfigScreen.this.renderers.get(renderer);
+         int absoluteX = pos.getAbsoluteX();
+         int absoluteY = pos.getAbsoluteY();
+         return this.mouseX >= absoluteX && this.mouseX <= absoluteX + renderer.getWidth() && this.mouseY >= absoluteY && this.mouseY <= absoluteY + renderer.getHeight();
+      }
+   }
+}

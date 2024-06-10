@@ -1,0 +1,40 @@
+/*    */ package LehanClient.mods.impl;
+/*    */ 
+/*    */ import LehanClient.gui.hud.ScreenPosition;
+/*    */ import LehanClient.mods.ModDraggable;
+/*    */ import net.minecraft.client.Minecraft;
+/*    */ 
+/*    */ 
+/*    */ public class ModPosition
+/*    */   extends ModDraggable
+/*    */ {
+/*    */   public int getWidth() {
+/* 12 */     return 100;
+/*    */   }
+/*    */ 
+/*    */   
+/*    */   public int getHeight() {
+/* 17 */     return 30;
+/*    */   }
+/*    */ 
+/*    */   
+/*    */   public void render(ScreenPosition pos) {
+/* 22 */     this.font.drawStringWithShadow((String)this.mc.thePlayer.getHorizontalFacing(), (pos.getAbsoluteX() + 50), (pos.getAbsoluteY() + 12), -1);
+/* 23 */     this.font.drawStringWithShadow("X: " + (Math.round((Minecraft.getMinecraft()).thePlayer.posX * 1000.0D) / 1000L), (pos.getAbsoluteX() + 2), (pos.getAbsoluteY() + 2), -1);
+/* 24 */     this.font.drawStringWithShadow("Y: " + (Math.round((Minecraft.getMinecraft()).thePlayer.posY * 1000.0D) / 1000L), (pos.getAbsoluteX() + 2), (pos.getAbsoluteY() + 12), -1);
+/* 25 */     this.font.drawStringWithShadow("Z: " + (Math.round((Minecraft.getMinecraft()).thePlayer.posZ * 1000.0D) / 1000L), (pos.getAbsoluteX() + 2), (pos.getAbsoluteY() + 22), -1);
+/*    */   }
+/*    */   
+/*    */   public void renderDummy(ScreenPosition pos) {
+/* 29 */     this.font.drawStringWithShadow((String)this.mc.thePlayer.getHorizontalFacing(), (pos.getAbsoluteX() + 50), (pos.getAbsoluteY() + 12), -1);
+/* 30 */     this.font.drawStringWithShadow("X: X", (pos.getAbsoluteX() + 2), (pos.getAbsoluteY() + 2), -1);
+/* 31 */     this.font.drawStringWithShadow("Y: Y", (pos.getAbsoluteX() + 2), (pos.getAbsoluteY() + 12), -1);
+/* 32 */     this.font.drawStringWithShadow("Z: Z", (pos.getAbsoluteX() + 2), (pos.getAbsoluteY() + 22), -1);
+/*    */   }
+/*    */ }
+
+
+/* Location:              C:\Users\Mathew\Documents\LehanClient.jar!\LehanClient\mods\impl\ModPosition.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

@@ -1,0 +1,11 @@
+/*   */ package LehanClient.mods;
+/*   */ 
+/*   */ public enum Category {
+/* 4 */   PLAYER, RENDER;
+/*   */ }
+
+
+/* Location:              C:\Users\Mathew\Documents\LehanClient.jar!\LehanClient\mods\Category.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

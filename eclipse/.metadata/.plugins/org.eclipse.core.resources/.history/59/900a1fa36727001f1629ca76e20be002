@@ -1,0 +1,21 @@
+package LehanClient.font;
+
+public class FontManager {
+   public static UnicodeFontRenderer bahnschrift;
+   public static UnicodeFontRenderer button;
+   public static UnicodeFontRenderer title;
+
+   public static void loadFonts() {
+      bahnschrift = UnicodeFontRenderer.getFontFromAssets("Bahnschrift", 20);
+      button = UnicodeFontRenderer.getFontFromAssets("Bahnschrift Light", 16);
+      title = UnicodeFontRenderer.getFontFromAssets("Bahnschrift", 30, 1);
+   }
+
+   public static enum FontType {
+      EMBOSS_BOTTOM,
+      EMBOSS_TOP,
+      NORMAL,
+      SHADOW_THICK,
+      SHADOW_THIN;
+   }
+}

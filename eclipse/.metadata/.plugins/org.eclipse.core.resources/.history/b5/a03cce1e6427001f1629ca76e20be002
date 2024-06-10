@@ -1,0 +1,173 @@
+/*     */ package LehanClient;
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ public class AnimationEngine
+/*     */ {
+/*     */   private long prevTime;
+/*     */   private float animationValue;
+/*     */   private float startValue;
+/*     */   private float endValue;
+/*     */   private boolean isIncreasing;
+/*     */   private float changeValuePms;
+/*     */   private boolean isDrawAnimation = false;
+/*     */   private boolean resetUsingBackWardsAnimation = false;
+/*     */   
+/*     */   public AnimationEngine(float startValue, float endValue, long time) {
+/*  23 */     this.prevTime = System.currentTimeMillis();
+/*  24 */     this.startValue = startValue;
+/*  25 */     this.endValue = (startValue == endValue) ? (endValue + 1.0F) : endValue;
+/*  26 */     this.animationValue = startValue;
+/*  27 */     this.isIncreasing = (endValue > startValue);
+/*  28 */     float animationDistance = Math.abs(startValue - endValue);
+/*  29 */     this.changeValuePms = animationDistance / (float)time;
+/*     */   }
+/*     */ 
+/*     */ 
+/*     */   
+/*     */   public AnimationEngine(float startValue, float endValue, long time, boolean instaIsDrawAnimation) {
+/*  35 */     this.prevTime = System.currentTimeMillis();
+/*  36 */     this.startValue = startValue;
+/*  37 */     this.endValue = (startValue == endValue) ? (endValue + 1.0F) : endValue;
+/*  38 */     this.animationValue = startValue;
+/*  39 */     this.isIncreasing = (endValue > startValue);
+/*  40 */     float animationDistance = Math.abs(startValue - endValue);
+/*  41 */     this.changeValuePms = animationDistance / (float)time;
+/*     */     
+/*  43 */     this.isDrawAnimation = instaIsDrawAnimation;
+/*     */   }
+/*     */ 
+/*     */ 
+/*     */   
+/*     */   public AnimationEngine() {}
+/*     */ 
+/*     */   
+/*     */   public float getAnimationValue() {
+/*  52 */     updateAnimationValue();
+/*  53 */     return this.animationValue;
+/*     */   }
+/*     */   
+/*     */   public boolean isAnimationDone() {
+/*  57 */     return (this.animationValue == this.endValue);
+/*     */   }
+/*     */ 
+/*     */   
+/*     */   private void updateAnimationValue() {
+/*  62 */     if (this.isDrawAnimation) {
+/*  63 */       this.resetUsingBackWardsAnimation = false;
+/*  64 */       if (this.animationValue == this.endValue)
+/*     */         return; 
+/*  66 */       if (this.isIncreasing) {
+/*  67 */         if (this.animationValue >= this.endValue) {
+/*  68 */           this.animationValue = this.endValue;
+/*     */           
+/*     */           return;
+/*     */         } 
+/*     */         
+/*  73 */         this.animationValue += this.changeValuePms * (float)(System.currentTimeMillis() - this.prevTime);
+/*     */ 
+/*     */         
+/*  76 */         if (this.animationValue > this.endValue)
+/*  77 */           this.animationValue = this.endValue; 
+/*  78 */         this.prevTime = System.currentTimeMillis();
+/*     */         return;
+/*     */       } 
+/*  81 */       if (this.animationValue <= this.endValue) {
+/*  82 */         this.animationValue = this.endValue;
+/*     */         return;
+/*     */       } 
+/*  85 */       this.animationValue -= this.changeValuePms * (float)(System.currentTimeMillis() - this.prevTime);
+/*     */ 
+/*     */ 
+/*     */       
+/*  89 */       if (this.animationValue < this.endValue)
+/*  90 */         this.animationValue = this.endValue; 
+/*  91 */       this.prevTime = System.currentTimeMillis();
+/*     */       
+/*     */       return;
+/*     */     } 
+/*  95 */     if (this.resetUsingBackWardsAnimation) {
+/*  96 */       setIsDrawAnimation(false);
+/*  97 */       if (this.animationValue == this.startValue) {
+/*  98 */         reset();
+/*  99 */         this.resetUsingBackWardsAnimation = false;
+/*     */         return;
+/*     */       } 
+/* 102 */       if (this.isIncreasing && 
+/* 103 */         this.animationValue <= this.startValue) {
+/* 104 */         reset();
+/*     */         
+/*     */         return;
+/*     */       } 
+/* 108 */       this.animationValue -= this.changeValuePms * (float)(System.currentTimeMillis() - this.prevTime);
+/* 109 */       if (this.animationValue < this.startValue)
+/* 110 */         reset(); 
+/* 111 */       this.prevTime = System.currentTimeMillis();
+/*     */       return;
+/*     */     } 
+/*     */   }
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */   
+/*     */   public void reset() {
+/* 121 */     this.animationValue = this.startValue;
+/* 122 */     this.prevTime = System.currentTimeMillis();
+/*     */   }
+/*     */ 
+/*     */ 
+/*     */   
+/*     */   public void AnimationUpdateValue(float startValue, float endValue, long time) {
+/* 128 */     reset();
+/* 129 */     this.prevTime = System.currentTimeMillis();
+/* 130 */     this.startValue = startValue;
+/* 131 */     this.endValue = (startValue == endValue) ? (endValue + 1.0F) : endValue;
+/* 132 */     this.animationValue = startValue;
+/* 133 */     this.isIncreasing = (endValue > startValue);
+/* 134 */     float animationDistance = Math.abs(startValue - endValue);
+/* 135 */     this.changeValuePms = animationDistance / (float)time;
+/*     */   }
+/*     */   
+/*     */   public void AnimationUpdateValue(float startValue, float endValue, long time, boolean instaDrawAnimation) {
+/* 139 */     this.prevTime = System.currentTimeMillis();
+/* 140 */     this.startValue = startValue;
+/* 141 */     this.endValue = (startValue == endValue) ? (endValue + 1.0F) : endValue;
+/* 142 */     this.animationValue = startValue;
+/* 143 */     this.isIncreasing = (endValue > startValue);
+/* 144 */     float animationDistance = Math.abs(startValue - endValue);
+/* 145 */     this.changeValuePms = animationDistance / (float)time;
+/*     */     
+/* 147 */     this.isDrawAnimation = instaDrawAnimation;
+/*     */   }
+/*     */ 
+/*     */ 
+/*     */   
+/*     */   public void setIsDrawAnimation(boolean drawAnimation) {
+/* 153 */     this.isDrawAnimation = drawAnimation;
+/*     */   }
+/*     */ 
+/*     */   
+/*     */   public boolean getIsDrawAnimation() {
+/* 158 */     return this.isDrawAnimation;
+/*     */   }
+/*     */ 
+/*     */   
+/*     */   public void resetUsingBackWardsAnimation() {
+/* 163 */     this.prevTime = System.currentTimeMillis();
+/* 164 */     setIsDrawAnimation(false);
+/* 165 */     this.resetUsingBackWardsAnimation = true;
+/*     */   }
+/*     */ }
+
+
+/* Location:              C:\Users\Mathew\Documents\LehanClient.jar!\LehanClient\AnimationEngine.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

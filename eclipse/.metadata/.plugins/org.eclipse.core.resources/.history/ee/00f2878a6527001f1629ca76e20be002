@@ -1,0 +1,65 @@
+/*    */ package LehanClient.mods;
+/*    */ 
+/*    */ import LehanClient.FileManager;
+/*    */ import com.google.gson.Gson;
+/*    */ import com.google.gson.GsonBuilder;
+/*    */ import java.io.File;
+/*    */ import java.io.FileNotFoundException;
+/*    */ import java.io.FileReader;
+/*    */ import java.io.FileWriter;
+/*    */ import java.io.IOException;
+/*    */ import net.minecraft.client.Minecraft;
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ public class ModToggle
+/*    */ {
+/* 17 */   private static final Gson gson = (new GsonBuilder()).setPrettyPrinting().create();
+/* 18 */   private static Minecraft mc = Minecraft.getMinecraft();
+/*    */   
+/*    */   public static File getFolder(Mod mod) {
+/* 21 */     File file = new File("Lehan Client");
+/* 22 */     file.mkdirs();
+/* 23 */     return file;
+/*    */   } public static void saveEnabled(Mod... mods) throws IOException { byte b;
+/*    */     int i;
+/*    */     Mod[] arrayOfMod;
+/* 27 */     for (i = (arrayOfMod = mods).length, b = 0; b < i; ) { Mod mod = arrayOfMod[b];
+/* 28 */       System.out.println("Saving mod: " + mod.getClass().getSimpleName().split("Mod")[1]);
+/*    */       
+/* 30 */       File file = new File(new File(mc.mcDataDir, "Folder" + File.separator + File.separator + "Mods" + File.separator + mod.getClass().getSimpleName().replace("Mod", "").replaceAll("\\d+", "")), "enabled.json");
+/* 31 */       file.getParentFile().mkdirs();
+/* 32 */       file.createNewFile();
+/* 33 */       boolean isEnabled = mod.isEnabled;
+/* 34 */       FileWriter writer = new FileWriter(file);
+/* 35 */       writer.write(gson.toJson(Boolean.valueOf(isEnabled)));
+/* 36 */       writer.close(); b++; }
+/*    */      } public static void loadEnabled(Mod... mods) throws FileNotFoundException { byte b;
+/*    */     int i;
+/*    */     Mod[] arrayOfMod;
+/* 40 */     for (i = (arrayOfMod = mods).length, b = 0; b < i; ) { Mod mod = arrayOfMod[b];
+/*    */       
+/* 42 */       File file = new File(new File(mc.mcDataDir, "Folder" + File.separator + File.separator + "Mods" + File.separator + mod.getClass().getSimpleName().replace("Mod", "").replaceAll("\\d+", "")), "enabled.json");
+/* 43 */       mod.isEnabled = ((Boolean)gson.fromJson(new FileReader(file), boolean.class)).booleanValue();
+/*    */       b++; }
+/*    */      }
+/*    */   
+/*    */   public static void saveDoubleToFile(Mod mod, Double b) {
+/* 48 */     FileManager.writeJsonToFile(new File(getFolder(mod), "Double.json"), b);
+/*    */   }
+/*    */   public static Double loadDoubleFromFile(Mod mod) {
+/* 51 */     Double b = (Double)FileManager.readFromJson(new File(getFolder(mod), "Double.json"), Double.class);
+/*    */     
+/* 53 */     if (b == null) {
+/* 54 */       b = Double.valueOf(1.0D);
+/* 55 */       saveDoubleToFile(mod, b);
+/*    */     } 
+/* 57 */     return b;
+/*    */   }
+/*    */ }
+
+
+/* Location:              C:\Users\Mathew\Documents\LehanClient.jar!\LehanClient\mods\ModToggle.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

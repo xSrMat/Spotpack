@@ -1,0 +1,24 @@
+package Spotpack;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.ResourceLocation;
+
+public class GuiHelper {
+   private static Minecraft mc = Minecraft.getMinecraft();
+
+   public static void drawPicture(int x, int y, int width, int height, String location) {
+      ResourceLocation loc = new ResourceLocation("lehan/" + location);
+      mc.getTextureManager().bindTexture(loc);
+      Gui.drawModalRectWithCustomSizedTexture((float)x, (float)y, 0.0F, 0.0F, (float)width, (float)height, (float)width, (float)height);
+   }
+
+   public void drawBackgroundPicture(int width, int height, String location) {
+      ScaledResolution scaledResolution = new ScaledResolution(mc);
+      ResourceLocation loc = new ResourceLocation(location);
+      mc.getTextureManager().bindTexture(loc);
+      Gui.drawModalRectWithCustomSizedTexture(0.0F, 0.0F, 0.0F, 0.0F, (float)scaledResolution.getScaledWidth(), (float)scaledResolution.getScaledHeight(), (float)scaledResolution.getScaledWidth(), (float)scaledResolution.getScaledHeight());
+      Gui.drawRect(0.0F, 0.0F, (float)width, (float)height, 1073741824);
+   }
+}
